@@ -17,38 +17,25 @@ const config: Config = {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: [
-      "light",
-      "dark",
-      "cupcake",
-      "bumblebee",
-      "emerald",
-      "corporate",
-      "synthwave",
-      "retro",
-      "cyberpunk",
-      "valentine",
-      "halloween",
-      "garden",
-      "forest",
-      "aqua",
-      "lofi",
-      "pastel",
-      "fantasy",
-      "wireframe",
-      "black",
-      "luxury",
-      "dracula",
-      "cmyk",
-      "autumn",
-      "business",
-      "acid",
-      "lemonade",
-      "night",
-      "coffee",
-      "winter",
-    ],
+      themes: [
+        {
+          mytheme: {
 
-}
+ "primary": "#65c3c8",
+ "secondary": "#ef9fbc",
+ "accent": "#eeaf3a",
+ "neutral": "#291334",
+ "base-100": "#faf7f5",
+ "info": "#3abff8",
+ "success": "#36d399",
+ "warning": "#fbbd23",
+ "error": "#f87272",
+            body: {
+   "background-color": "#e3e6e6",
+            }
+          },
+        },
+      ],
+    },
 }
 export default config
