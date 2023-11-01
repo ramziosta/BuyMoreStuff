@@ -1,1 +1,4 @@
 favicon.ico will go to the tab icon
+
+.ts files are used for functions and code that doesn't render a jsx component.
+
