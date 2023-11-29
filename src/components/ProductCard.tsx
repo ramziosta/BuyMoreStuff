@@ -19,6 +19,7 @@ export default function ProductCard({product}: { product: Product }) {
                         <h2 className="card-title">{product.name}</h2>
                         {isNew && <div className="badge badge-secondary">New</div>}
                         <p>{product.description}</p>
+                       
                         <PriceTag price={product.price}/>
                         <div className="card-actions justify-end">
                             <button className="btn btn-primary">Buy Now!</button>

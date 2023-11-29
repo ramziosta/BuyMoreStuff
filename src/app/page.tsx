@@ -12,7 +12,7 @@ export default async function Home() {
     return (
         <div>
             <div className="hero rounded-xl bg-base-200">
-                <div className="hero-content flex-col lg:flex-row">
+                <div className="hero-content flex-col lg:flex-row custom-hero">
                     <Image
                         src={products[0].imageUrl}
                         alt={products[0].name}
@@ -24,7 +24,7 @@ export default async function Home() {
                     <div>
                         <h3 className="text-3xl font-bold text-cyan-700">Featured Product</h3>
                         <h1 className="text-5xl font-bold">{products[0].name}</h1>
-                         <PriceTag price={products[0].price}/>
+                        <PriceTag price={products[0].price}/>
                         <p className="py-6">{products[0].description}</p>
 
                         <Link
