@@ -7,10 +7,12 @@ import {cache} from "react";
 
 interface ProductPageProps {
     params: {
-        id: string;
+        id: string,
+
     };
 }
 
+//we cache the product in order not to get the product from the database twice for the card and for the mnetadata
 const getProduct = cache(async (id: string) => {
     const product = await prisma.product.findUnique({where: {id}});
     if (!product) notFound();
@@ -21,7 +23,7 @@ export async function generateMetadata({params: {id},}: ProductPageProps): Promi
     const product = await getProduct(id);
 
     return {
-        title: product.name + " - BMS",
+        title: product.name + " - BuyMoreStuff",
         description: product.description,
         openGraph: {
             images: [{url: product.imageUrl}],

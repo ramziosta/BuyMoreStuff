@@ -8,15 +8,87 @@ datasource db {
 }
 
 model Product {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
   description      String
   imageUrl         String
-  name             String
-  price            Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  additionalImages String[] // Array of strings for additional images
+  price            Int // Store price in the smallest unit (like cents)
+  category         String // Existing category field
+  tags             String[] // Tags for more flexible categorization
+  brand            String? // Brand or manufacturer
+  stockQuantity    Int // Quantity in stock
+  isInStock        Boolean // Whether the product is in stock
+  sku              String? // Stock Keeping Unit for unique identification
+  averageRating    Float? // Average rating of the product
+  reviewCount      Int // Number of reviews the product has
+  dateAdded        DateTime       @default(now()) // Date when the product was added
+  lastUpdated      DateTime       @updatedAt // Date when the product was last updated
+  dimensions       Json? // Store dimensions as JSON (height, width, depth)
+  weight           Float? // Weight of the product
+  seoMetadata      Json? // SEO-related data (meta title, description)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
   details          String
-  additionalImages String[] // This is an array of strings
+  CartItem         CartItem[]
+  WishListItems    WishListItem[]
 
   @@map("products")
+}
+
+model Cart {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String?    @unique @db.ObjectId
+  user      User?      @relation(fields: [userId], references: [id])
+  CartItem  CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
+  cartId    String  @db.ObjectId
+  cart      Cart    @relation(fields: [cartId], references: [id])
+
+  @@map("cartItems")
+}
+
+model WishList {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userId       String?        @unique @db.ObjectId
+  user         User?          @relation(fields: [userId], references: [id])
+  WishListItem WishListItem[]
+
+  @@map("wishlists")
+}
+
+model WishListItem {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity   Int
+  WishListId String   @db.ObjectId
+  WishList   WishList @relation(fields: [WishListId], references: [id])
+
+  @@map("wishlistItems")
+}
+
+model User {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String
+  street      String // Street number and name
+  city        String
+  state       String
+  zipcode     String
+  phoneNumber String?
+  cart        Cart? // Relation to Cart
+  wishList    WishList? // Relation to WishList
 }

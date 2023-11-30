@@ -75,3 +75,5 @@ export default async function AddProductPage() {
         </div>
     );
 }
+
+//TODO add new fields to the form to match the product schema in the schema.prisma file
