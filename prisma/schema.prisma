@@ -8,30 +8,29 @@ datasource db {
 }
 
 model Product {
-  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   description      String
   imageUrl         String
+  price            Int
   additionalImages String[] // Array of strings for additional images
-  price            Int // Store price in the smallest unit (like cents)
-  category         String // Existing category field
-  tags             String[] // Tags for more flexible categorization
-  brand            String? // Brand or manufacturer
-  stockQuantity    Int // Quantity in stock
-  isInStock        Boolean // Whether the product is in stock
-  sku              String? // Stock Keeping Unit for unique identification
-  averageRating    Float? // Average rating of the product
-  reviewCount      Int // Number of reviews the product has
-  dateAdded        DateTime       @default(now()) // Date when the product was added
-  lastUpdated      DateTime       @updatedAt // Date when the product was last updated
-  dimensions       Json? // Store dimensions as JSON (height, width, depth)
-  weight           Float? // Weight of the product
-  seoMetadata      Json? // SEO-related data (meta title, description)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  details          String
-  CartItem         CartItem[]
-  WishListItems    WishListItem[]
+
+  category      String? // Existing category field
+  tags          String[] // Tags for more flexible categorization
+  brand         String? // Brand or manufacturer
+  stockQuantity Int? // Quantity in stock
+  isInStock     Boolean? // Whether the product is in stock
+  sku           String? // Stock Keeping Unit for unique identification
+  averageRating Float? // Average rating of the product
+  reviewCount   Int? // Number of reviews the product has
+  dimensions    Json? // Store dimensions as JSON (height, width, depth)
+  weight        Float? // Weight of the product
+  seoMetadata   Json? // SEO-related data (meta title, description)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  details       String?
+  CartItem      CartItem[]
+  WishListItems WishListItem[]
 
   @@map("products")
 }
@@ -42,7 +41,7 @@ model Cart {
   updatedAt DateTime   @updatedAt
   userId    String?    @unique @db.ObjectId
   user      User?      @relation(fields: [userId], references: [id])
-  CartItem  CartItem[]
+  items     CartItem[]
 
   @@map("carts")
 }

@@ -14,15 +14,15 @@ async function addProduct(formData: FormData) {
     const description = formData.get("description")?.toString();
     const imageUrl = formData.get("imageUrl")?.toString();
     const price = Number(formData.get("price")?.toString() || 0);
-   const details = formData.get("details")?.toString() || "";
-
+    const details = formData.get("details")?.toString() || "";
+    const category = formData.get("category")?.toString() || "";
     if (!name || !description || !imageUrl || !price) {
         throw Error("Missing required fields");
     }
 
     try {
         await prisma.product.create({
-            data: {name, description, imageUrl, price, details},
+            data: {name, description, imageUrl, price, details,},
         });
     } catch (error) {
         console.error("Prisma operation failed:", error);
