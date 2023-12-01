@@ -59,4 +59,4 @@ export async function createWishList(): Promise<WishList> {
     };
 }
 
-//TODO need to fix the wishlist
+//TODO need to edit sending the items from wishlist to cart

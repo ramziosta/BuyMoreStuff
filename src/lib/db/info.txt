@@ -1,0 +1,7 @@
+file names have to match the schema, since we are using them to get products from and to db/local storage using prisma
+
+when the schema changes we need to run
+npx prisma generate
+npx prisma db
+
+wishList => not wishlist

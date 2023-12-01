@@ -39,8 +39,11 @@ export async function getCart(): Promise<ShoppingCart | null> {
     const localCartId = cookies().get("localCartId")?.value;
     const cart = localCartId ?
         await prisma.cart.findUnique({
-            where: {id: localCartId},
-            include: {items: {include: {product: true}}},
+            where: {id: localCartId},  // stores only the product id
+            include: {items: {include: {product: true}}}, // prisma find the product from db
+            /* we get the product from the database, not from the local storage, in case the product is updated
+            the local storage only stores the product id, not the whole product object
+            */
         })
         : null;
 
@@ -48,10 +51,11 @@ export async function getCart(): Promise<ShoppingCart | null> {
         return null;
     }
     const items = cart.items;
-/* This uses JS reduce function to calculate the total number of items in the cart, and the total price in the cart
-item.reduce((total, item)=>{ function for what we want to do with the item}, 0: starting point)
-Quantity: item.reduce((total, item) => {total + item.quantity}, 0)
-Total Price: item.reduce((total, item) => {total + item.quantity * item.price}, 0)*/
+    /* This uses JS reduce function to calculate the total number of items in the cart, and the total price in the cart
+    item.reduce((total, item)=>{ function for what we want to do with the item}, 0: starting point)
+    Quantity: item.reduce((total, item) => {total + item.quantity}, 0)
+    Total Price: item.reduce((total, item) => {total + item.quantity * item.price}, 0)*/
+    // we return the cart items with the total number of items and the total price
     return {
         ...cart,
         size: items.reduce((total, item) => total + item.quantity, 0),

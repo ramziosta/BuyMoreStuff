@@ -8,29 +8,28 @@ datasource db {
 }
 
 model Product {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   description      String
   imageUrl         String
   price            Int
   additionalImages String[] // Array of strings for additional images
-
-  category      String? // Existing category field
-  tags          String[] // Tags for more flexible categorization
-  brand         String? // Brand or manufacturer
-  stockQuantity Int? // Quantity in stock
-  isInStock     Boolean? // Whether the product is in stock
-  sku           String? // Stock Keeping Unit for unique identification
-  averageRating Float? // Average rating of the product
-  reviewCount   Int? // Number of reviews the product has
-  dimensions    Json? // Store dimensions as JSON (height, width, depth)
-  weight        Float? // Weight of the product
-  seoMetadata   Json? // SEO-related data (meta title, description)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  details       String?
-  CartItem      CartItem[]
-  WishListItems WishListItem[]
+  category         String? // Existing category field
+  tags             String[] // Tags for more flexible categorization
+  brand            String? // Brand or manufacturer
+  stockQuantity    Int? // Quantity in stock
+  isInStock        Boolean? // Whether the product is in stock
+  sku              String? // Stock Keeping Unit for unique identification
+  averageRating    Float? // Average rating of the product
+  reviewCount      Int? // Number of reviews the product has
+  dimensions       Json? // Store dimensions as JSON (height, width, depth)
+  weight           Float? // Weight of the product
+  seoMetadata      Json? // SEO-related data (meta title, description)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  details          String?
+  CartItem         CartItem[]
+  WishListItems    WishListItem[]
 
   @@map("products")
 }
@@ -47,8 +46,8 @@ model Cart {
 }
 
 model CartItem {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  productId String  @db.ObjectId
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId // id of the cart item
+  productId String  @db.ObjectId // Id of the product in the cart
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   cartId    String  @db.ObjectId
@@ -58,7 +57,7 @@ model CartItem {
 }
 
 model WishList {
-  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId // id of the wishlist
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   userId    String?        @unique @db.ObjectId
@@ -69,8 +68,8 @@ model WishList {
 }
 
 model WishListItem {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId  String   @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // id of the wishlist item
+  productId  String   @db.ObjectId // Id of the product in the wishlist
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity   Int
   wishListId String   @db.ObjectId
@@ -91,3 +90,7 @@ model User {
   cart        Cart? // Relation to Cart
   wishList    WishList? // Relation to WishList
 }
+
+// when the schema changes we need to run
+// npx prisma generate
+// npx prisma db
