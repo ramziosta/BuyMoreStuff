@@ -2,3 +2,4 @@ favicon.ico will go to the tab icon
 
 .ts files are used for functions and code that doesn't render a jsx component.
 
+format.ts change the currency tag, calculations and language of the price tag
