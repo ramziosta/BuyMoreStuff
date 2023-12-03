@@ -53,8 +53,8 @@ export default async function ProductPage({params: {id},}: ProductPageProps) {
                 <PriceTag price={product.price} className="mt-4"/>
                 <p className="py-6">{product.description}</p>
                 {product.details && <p className="mb-6">{product.details}</p>}
-                <div className="flex-col gap-2">
-                     <AddToWishListButton productId={product.id} incrementProductQuantity={incrementProductQuantity}/>
+            <div className="flex-col gap-2">
+                 <AddToWishListButton productId={product.id} incrementProductQuantity={incrementProductQuantity}/>
                     <AddToCartButton productId={product.id} incrementProductQuantity={incrementProductQuantity}/>
 
                 </div>

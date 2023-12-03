@@ -1,15 +1,16 @@
 "use client";
 
 import {useState, useTransition} from "react";
+import {incrementWishList} from "@/app/products/[id]/wishListActions";
+
 
 interface AddToWishListButtonProps {
     productId: string;
-    incrementProductQuantity: (productId: string) => Promise<void>;
+
 }
 
 export default function AddToWishListButton({
-                                                productId,
-                                                incrementProductQuantity,
+                                                productId
                                             }: AddToWishListButtonProps) {
     const [isPending, startTransition] = useTransition();
     const [success, setSuccess] = useState(false);
@@ -23,7 +24,7 @@ export default function AddToWishListButton({
                     onClick={() => {
                         setSuccess(false);
                         startTransition(async () => {
-                            await incrementProductQuantity(productId);
+                            await incrementWishList(productId);
                             setSuccess(true);
                         });
                     }}
@@ -53,3 +54,5 @@ export default function AddToWishListButton({
         </div>
     );
 }
+
+//TODO need to create a wishlist page and transfer to cart buttons
