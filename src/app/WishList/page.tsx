@@ -1,7 +1,7 @@
 import { getWishList } from "@/lib/db/wishList";
 import { formatPrice } from "@/lib/format";
 import WishListEntry from "./WishListEntry";
-import { setWishListQuantity } from "./wishListAactions";
+import { setWishListQuantity } from "./wishListActions";
 
 export const metadata = {
   title: "Your WishList - Buy More Stuff",
@@ -15,9 +15,9 @@ export default async function WishListPage() {
       <h1 className="mb-6 text-3xl font-bold">WishList</h1>
       {wishList?.items.map((wishListItem) => (
         <WishListEntry
-          cartItem={wishListItem}
+          wishListItem={wishListItem}
           key={wishListItem.id}
-          setProductQuantity={setWishListQuantity}
+          setWishListQuantity={setWishListQuantity}
         />
       ))}
       {!wishList?.items.length && <p>Your WishList is empty.</p>}
