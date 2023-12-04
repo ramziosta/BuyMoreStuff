@@ -44,7 +44,7 @@ export default async function Navbar() {
                         </div>
                     </form>
                     <ShoppingCartButton cart={cart}/>
-                    <WishListButton wishlist={wishList}/>
+                    <WishListButton  wishlist={wishList}/>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@ import {incrementWishList} from "@/app/products/[id]/wishListActions";
 
 interface AddToWishListButtonProps {
     productId: string;
+    incrementProductQuantity: (productId: string) => Promise<void>;
 
 }
 
