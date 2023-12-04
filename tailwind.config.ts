@@ -14,6 +14,10 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
+      colors: {
+        fullCart: '#bb4600', // custom color
+          fullWishlist : '#b90202' // custom color
+      },
   },
   plugins: [require("daisyui")],
   daisyui: {
@@ -35,6 +39,7 @@ const config: Config = {
             }
           },
         },
+
       ],
     },
 }
