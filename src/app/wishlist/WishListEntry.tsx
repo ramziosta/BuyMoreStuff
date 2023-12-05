@@ -1,20 +1,20 @@
 "use client";
 
-import { CartWithProducts } from "@/lib/db/cart";
+import { WishListWithProducts } from "@/lib/db/wishList";
 import { formatPrice } from "@/lib/format";
 import Image from "next/image";
 import Link from "next/link";
 import { useTransition } from "react";
 
-interface CartEntryProps {
-  cartItem: CartWithProducts;
-  setProductQuantity: (productId: string, quantity: number) => Promise<void>;
+interface wishListEntryProps {
+  wishListItem: WishListWithProducts;
+  setWishListQuantity: (productId: string, quantity: number) => Promise<void>;
 }
 
-export default function CartEntry({
-  cartItem: { product, quantity },
-  setProductQuantity,
-}: CartEntryProps) {
+export default function WishListEntry({
+  wishListItem: { product, quantity },
+  setWishListQuantity,
+}: wishListEntryProps) {
   const [isPending, startTransition] = useTransition();
 
   const quantityOptions: JSX.Element[] = [];
@@ -49,7 +49,7 @@ export default function CartEntry({
               onChange={(e) => {
                 const newQuantity = parseInt(e.currentTarget.value);
                 startTransition(async () => {
-                  await setProductQuantity(product.id, newQuantity);
+                  await setWishListQuantity(product.id, newQuantity);
                 });
               }}
             >
