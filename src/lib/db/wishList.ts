@@ -6,6 +6,9 @@ export type WishListWithProducts = Prisma.WishListGetPayload<{
     include: { items: { include: { product: true } } };
 }>;
 
+export type WishListItemsWithProducts  = Prisma.WishListItemGetPayload<{
+    include: { product: true };
+}>;
 export type WishList = WishListWithProducts & {
     size: number;
     subtotal: number;
@@ -59,4 +62,4 @@ export async function createWishList(): Promise<WishList> {
     };
 }
 
-//TODO need to edit sending the items from wishlist to cart
+//TODO need to edit sending the items from wishlist to cart or checkout, delete items from the wishjlist

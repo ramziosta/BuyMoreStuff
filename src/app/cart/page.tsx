@@ -1,10 +1,10 @@
 import { getCart } from "@/lib/db/cart";
 import { formatPrice } from "@/lib/format";
-import CartEntry from "./CartEntry";
+import CartDisplayCard from "./CartDisplayCard";
 import { setProductQuantity } from "./actions";
 
 export const metadata = {
-  title: "Your Cart - Flowmazon",
+  title: "Your Cart -Buy More Stuff",
 };
 
 export default async function CartPage() {
@@ -14,7 +14,7 @@ export default async function CartPage() {
     <div>
       <h1 className="mb-6 text-3xl font-bold">Shopping Cart</h1>
       {cart?.items.map((cartItem) => (
-        <CartEntry
+        <CartDisplayCard
           cartItem={cartItem}
           key={cartItem.id}
           setProductQuantity={setProductQuantity}

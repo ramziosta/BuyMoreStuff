@@ -1,17 +1,17 @@
 "use client";
 
-import { WishListWithProducts } from "@/lib/db/wishList";
+import { WishListItemsWithProducts } from "@/lib/db/wishList";
 import { formatPrice } from "@/lib/format";
 import Image from "next/image";
 import Link from "next/link";
 import { useTransition } from "react";
 
 interface wishListEntryProps {
-  wishListItem: WishListWithProducts;
+  wishListItem: WishListItemsWithProducts;
   setWishListQuantity: (productId: string, quantity: number) => Promise<void>;
 }
 
-export default function WishListEntry({
+export default function WishListDisplayCard({
   wishListItem: { product, quantity },
   setWishListQuantity,
 }: wishListEntryProps) {

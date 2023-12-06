@@ -2,35 +2,22 @@ import {Prisma} from "@prisma/client";
 import {cookies} from "next/dist/client/components/headers";
 import prisma from "./prisma";
 
+// this defines the type for the cart  that has products. It includes the data associated with the product
 export type CartWithProducts = Prisma.CartGetPayload<{
     include: { items: { include: { product: true } } };
 }>;
-
+// this type defines the shopping cart, size is number of items and subtotal is total price of all items in the cart
 export type ShoppingCart = CartWithProducts & {
     size: number;
     subtotal: number;
 };
 
+//this  type defines getting the data about the item in the cart, we get the data about the product
+export type CartItemData = Prisma.CartItemGetPayload<{
+    include: { product: true };
+}>;
 
-// create a cart
-export async function createCart(): Promise<ShoppingCart> {
-    const newCart = await prisma.cart.create({
-        data: {},
-    });
-
-// Note: Needs encryption + secure settings in real production app
-// when the user add a new product to the cart, we need to add the product to the local storage if the user is not logged in
-    cookies().set("localCartId", newCart.id);
-
-    return {
-        ...newCart,
-        items: [],
-        size: 0,
-        subtotal: 0,
-    };
-}
-
-// get the cart
+//  this function is used to get the cart
 /* the shopping cart is stored in local storage if the user is not logged in using cookies
 ternary operator is used to check if there is a cart in local storage: localCartId
 if there is a cart then we use it otherwise its null ( empty cart)
@@ -65,3 +52,23 @@ export async function getCart(): Promise<ShoppingCart | null> {
         ),
     };
 }
+
+// this function is used to create a new cart
+export async function createCart(): Promise<ShoppingCart> {
+    const newCart = await prisma.cart.create({
+        data: {},
+    });
+
+// Note: Needs encryption + secure settings in real production app
+// when the user add a new product to the cart, we need to add the product to the local storage if the user is not logged in
+    cookies().set("localCartId", newCart.id);
+
+    return {
+        ...newCart,
+        items: [],
+        size: 0,
+        subtotal: 0,
+    };
+}
+
+//TODO send items to wishlist or checkout and delete items from cart
