@@ -52,3 +52,4 @@ export default async function Navbar() {
 }
 
 //TODO fix the navbar styling and hover effect for better UX
+//when a user resets the cart to 0 edit the color of the cart and wishlist should go back to black

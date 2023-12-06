@@ -1,12 +1,13 @@
 "use client";
 
-import { ShoppingCart } from "@/lib/db/cart";
+import { ShoppingCart} from "@/lib/db/cart";
 import { formatPrice } from "@/lib/format";
 import Link from "next/link";
 
 interface ShoppingCartButtonProps {
   cart: ShoppingCart | null;
 }
+
 
 export default function ShoppingCartButton({ cart }: ShoppingCartButtonProps) {
   function closeDropdown() {
@@ -22,7 +23,7 @@ export default function ShoppingCartButton({ cart }: ShoppingCartButtonProps) {
         <div className="indicator ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-7 w-7 ${cart ? 'text-fullCart' : 'text-neutral'} ${cart ? 'fill-fullCart' : 'fill-neutral'}`}
+            className={`h-6 w-6 ${cart ? 'text-fullCart' : 'text-neutral'} ${cart ? 'fill-fullCart' : 'fill-neutral'}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
