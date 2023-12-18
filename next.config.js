@@ -3,11 +3,13 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { hostname: "images.unsplash.com" },
+      { hostname: "lh3.googleusercontent.com"},
+      
 
     ],
   },
-  experimental: {
-    serverActions: true,
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 

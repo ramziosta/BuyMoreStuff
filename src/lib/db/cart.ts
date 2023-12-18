@@ -17,7 +17,7 @@ export type CartItemData = Prisma.CartItemGetPayload<{
     include: { product: true };
 }>;
 
-//  this function is used to get the cart
+// this function is used to get the cart
 /* the shopping cart is stored in local storage if the user is not logged in using cookies
 ternary operator is used to check if there is a cart in local storage: localCartId
 if there is a cart then we use it otherwise its null ( empty cart)

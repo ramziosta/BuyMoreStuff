@@ -5,8 +5,10 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import ShoppingCartButton from "./ShoppingCartButton";
 import WishListButton from "./WishListButton";
+import UserMenuButton from "./UserMenuButton";
 import {getWishList} from "@/lib/db/wishList";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 async function searchProducts(formData: FormData) {
     //server component
     "use server";
@@ -21,6 +23,8 @@ async function searchProducts(formData: FormData) {
 
 
 export default async function Navbar() {
+
+    const session = await getServerSession(authOptions);
     const cart = await getCart();
     const wishList = await getWishList();
 
@@ -29,7 +33,7 @@ export default async function Navbar() {
             <div className="navbar m-auto max-w-7xl flex-col gap-2 sm:flex-row h-40  items-center">
                 <div className="flex-1 flex-row mb-4">
                     <Link href="/" className="btn-ghost btn text-xl normal-case">
-                        <Image src={logo} height={70} width={70} alt="Buy More Stuff logo" className="rounded-full "/>
+                        <Image src={logo} height={70} width={70} alt="Buy More Stuff logo" className="rounded-full " />
                         Buy More Stuff
                     </Link>
                 </div>
@@ -43,13 +47,17 @@ export default async function Navbar() {
                             />
                         </div>
                     </form>
-                    <ShoppingCartButton cart={cart}/>
-                    <WishListButton  wishlist={wishList}/>
+                    <ShoppingCartButton cart={cart} />
+                    <WishListButton wishlist={wishList} />
+                    <UserMenuButton session={session} />
                 </div>
             </div>
         </div>
     );
 }
+
+
+
 
 //TODO fix the navbar styling and hover effect for better UX
 //when a user resets the cart to 0 edit the color of the cart and wishlist should go back to black

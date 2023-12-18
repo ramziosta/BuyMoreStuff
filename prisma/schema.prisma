@@ -36,11 +36,11 @@ model Product {
 
 model Cart {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  items     CartItem[]
   userId    String?    @unique @db.ObjectId
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@map("carts")
 }
@@ -57,12 +57,12 @@ model CartItem {
 }
 
 model WishList {
-  id        String         @id @default(auto()) @map("_id") @db.ObjectId // id of the wishlist
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  items     WishListItem[]
+  userId    String?        @unique @db.ObjectId
+  user      User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  userId    String?        @unique @db.ObjectId
-  user      User?          @relation(fields: [userId], references: [id])
-  items     WishListItem[]
 
   @@map("wishLists")
 }
@@ -79,16 +79,62 @@ model WishListItem {
 }
 
 model User {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String
-  street      String // Street number and name
-  city        String
-  state       String
-  zipcode     String
-  phoneNumber String?
-  cart        Cart? // Relation to Cart
-  wishList    WishList? // Relation to WishList
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?
+  street        String? // Street number and name
+  city          String?
+  state         String?
+  zipcode       String?
+  phoneNumber   String?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  wishList      WishList[] // Relation to WishList
+  Cart          Cart[] // Relation to Cart
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
 }
 
 // when the schema changes we need to run
