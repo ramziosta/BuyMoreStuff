@@ -14,6 +14,13 @@ export const authOptions: NextAuthOptions = {
             clientSecret: env.GOOGLE_CLIENT_SECRET,
         }),
     ],
+    // we create a type for the user id in the @types folder and export it to the whole project
+    callbacks:{
+        session({session, user}){
+            session.user.id = user.id;
+            return session
+        }
+    }
 };
 
 const handler = NextAuth(authOptions);
@@ -21,4 +28,7 @@ const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
 
 
+
+//TODO need to read about the types and exporting of NextAuth handlers to the whole project
+//TODO need to add user email and password to the login auth options
 

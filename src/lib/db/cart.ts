@@ -1,6 +1,9 @@
-import {Prisma} from "@prisma/client";
+import {Cart, CartItem, Prisma} from "@prisma/client";
 import {cookies} from "next/dist/client/components/headers";
 import prisma from "./prisma";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+
 
 // this defines the type for the cart  that has products. It includes the data associated with the product
 export type CartWithProducts = Prisma.CartGetPayload<{
@@ -23,16 +26,28 @@ ternary operator is used to check if there is a cart in local storage: localCart
 if there is a cart then we use it otherwise its null ( empty cart)
 if cart = localstorage ? cart uses localStorageId: otherwise null */
 export async function getCart(): Promise<ShoppingCart | null> {
-    const localCartId = cookies().get("localCartId")?.value;
-    const cart = localCartId ?
-        await prisma.cart.findUnique({
-            where: {id: localCartId},  // stores only the product id
-            include: {items: {include: {product: true}}}, // prisma find the product from db
-            /* we get the product from the database, not from the local storage, in case the product is updated
-            the local storage only stores the product id, not the whole product object
-            */
-        })
-        : null;
+// if the user is logged in we grab the cart from the database otherwise the cart is what cart is found in local storage
+    const session = await getServerSession(authOptions);
+    let cart: CartWithProducts | null = null;
+
+    if (session) {
+    cart = await prisma.cart.findFirst({
+        where: {userId: session.user.id},
+        include: {items: {include: {product: true}}},
+    })
+
+    } else {
+        const localCartId = cookies().get("localCartId")?.value;
+        cart = localCartId ?
+            await prisma.cart.findUnique({
+                where: {id: localCartId},  // stores only the product id
+                include: {items: {include: {product: true}}}, // prisma find the product from db
+                /* we get the product from the database, not from the local storage, in case the product is updated
+                the local storage only stores the product id, not the whole product object
+                */
+            })
+            : null;
+    }
 
     if (!cart) {
         return null;
@@ -55,14 +70,26 @@ export async function getCart(): Promise<ShoppingCart | null> {
 
 // this function is used to create a new cart
 export async function createCart(): Promise<ShoppingCart> {
-    const newCart = await prisma.cart.create({
-        data: {},
-    });
+// checks if the user is logged in and creates and new cart for the user and attaches thhe id of the user to it
+// otherwise it will be an anonymous cart
+    const session = await getServerSession(authOptions);
+    let newCart: Cart;
+
+    if (session) {
+        newCart = await prisma.cart.create({
+        data: {
+            userId: session.user.id
+        },});
+    }
+    else {
+        newCart = await prisma.cart.create({
+            data: {},
+        });
 
 // Note: Needs encryption + secure settings in real production app
 // when the user add a new product to the cart, we need to add the product to the local storage if the user is not logged in
-    cookies().set("localCartId", newCart.id);
-
+        cookies().set("localCartId", newCart.id);
+    }
     return {
         ...newCart,
         items: [],

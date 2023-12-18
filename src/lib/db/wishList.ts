@@ -1,6 +1,10 @@
-import {Prisma} from "@prisma/client";
+import {WishList as ClientWishList, WishListItem, Prisma} from "@prisma/client";
+// to remove naming errors I changed the WishList name to ClientWishList
 import {cookies} from "next/dist/client/components/headers";
 import prisma from "./prisma";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {redirect} from "next/navigation";
 
 export type WishListWithProducts = Prisma.WishListGetPayload<{
     include: { items: { include: { product: true } } };
@@ -19,13 +23,25 @@ ternary operator is used to check if there is a wishlist in local storage: local
  if there is a wishlist then we use it otherwise its null ( empty wishlist)
  if wishlist = localstorage ? wishlist uses localStorageId: otherwise null */
 export async function getWishList(): Promise<WishList | null> {
-    const localWishListId = cookies().get("localWishListId")?.value;
-    const wishList = localWishListId ?
-        await prisma.wishList.findUnique({
-            where: {id: localWishListId},
+    const session = await getServerSession(authOptions);
+    let wishList: WishListWithProducts | null = null;
+// if the user is logged we get the wishlist from the database using userId otherwise we get the wishlist from the local storage
+    if (session) {
+        wishList = await prisma.wishList.findFirst({
+            where: {userId: session.user.id},
             include: {items: {include: {product: true}}},
-        })
-        : null;
+        });
+    }  else {
+            const localWishListId = cookies().get("localWishListId")?.value;
+            wishList = localWishListId ?
+                await prisma.wishList.findUnique({
+                    where: {id: localWishListId},
+                    include: {items: {include: {product: true}}},
+                })
+                : null;
+        }
+
+
 
     if (!wishList) {
         return null;
@@ -46,13 +62,35 @@ Total Price: item.reduce((total, item) => {total + item.quantity * item.price}, 
     };
 }
 
-export async function createWishList(): Promise<WishList> {
-    const newWishList = await prisma.wishList.create({
-        data: {},
-    });
+export async function createWishList(): Promise<{
+    createdAt: Date;
+    size: number;
+    subtotal: number;
+    id: string;
+    userId: string | null;
+    items: any[];
+    updatedAt: Date
+}> {
+
+    // checks to see if user is logged in and creates the New wishlist for the user and attaches the id to it
+    // otherwise it will create an anonymous wishlist
+    const session = await getServerSession(authOptions);
+
+    let newWishList: ClientWishList;
+
+    if (session) {
+        newWishList = await prisma.wishList.create({
+            data: {userId: session.user.id},
+        });
+    }
+    else {
+        newWishList = await prisma.wishList.create({
+            data: {},
+        });
 
 // Note: Needs encryption + secure settings in real production app
-    cookies().set("localWishListId", newWishList.id);
+        cookies().set("localWishListId", newWishList.id);
+    }
 
     return {
         ...newWishList,
