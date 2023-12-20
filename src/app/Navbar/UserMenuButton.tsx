@@ -49,6 +49,7 @@ export default function UserMenuButton({ session }: UserMenuButtonProps) {
                             Sign Out
                         </button>
                     ) : (
+                        // we can also direct to a Link and href , but this method is better
                         <button onClick={() => signIn()}>Sign In</button>
                     )}
                 </li>
