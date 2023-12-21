@@ -34,7 +34,6 @@ async function addProduct(formData: FormData) {
     } catch (error) {
         console.error("Prisma operation failed:", error);
     }
-    prisma.$disconnect();
     redirect("/");
 }
 
@@ -85,9 +84,9 @@ export default async function AddProductPage() {
                 <FormSubmitButton className=" btn-block">Add Product</FormSubmitButton>
 
             </form>
-            {/*<div className="flex justify-center mt-5">*/}
-            {/*    <NavigateButton title={"home"} className={"btn-secondary"} url={"/"}/>*/}
-            {/*</div>*/}
+            <div className="flex justify-center mt-5">
+                <NavigateButton title={"home"} className={"btn-secondary"} url={"/"}/>
+            </div>
         </div>
     );
 }

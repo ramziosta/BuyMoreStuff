@@ -24,7 +24,7 @@ ternary operator is used to check if there is a wishlist in local storage: local
  if wishlist = localstorage ? wishlist uses localStorageId: otherwise null */
 export async function getWishList(): Promise<WishList | null> {
     const session = await getServerSession(authOptions);
-    let wishList: WishListWithProducts | null = null;
+    let wishList: WishListWithProducts | null;
 // if the user is logged we get the wishlist from the database using userId otherwise we get the wishlist from the local storage
     if (session) {
         wishList = await prisma.wishList.findFirst({

@@ -28,7 +28,7 @@ if cart = localstorage ? cart uses localStorageId: otherwise null */
 export async function getCart(): Promise<ShoppingCart | null> {
 // if the user is logged in we grab the cart from the database otherwise the cart is what cart is found in local storage
     const session = await getServerSession(authOptions);
-    let cart: CartWithProducts | null = null;
+    let cart: CartWithProducts | null;
 
     if (session) {
     cart = await prisma.cart.findFirst({

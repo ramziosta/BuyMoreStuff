@@ -7,7 +7,7 @@ interface ProductCardProps {
     product: Product;
 }
 
-export default function ProductCard({product}: { product: Product }) {
+export default function ProductCard({product}: ProductCardProps) {
     const isNew = Date.now() - new Date(product.createdAt).getTime() < 1000 * 60 * 60 * 24 * 7;
     return (
         <>
