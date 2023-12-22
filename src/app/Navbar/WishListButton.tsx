@@ -62,3 +62,4 @@ export default function WishListButton({wishlist}: WishListCartButtonProps) {
         </div>
     );
 }
+

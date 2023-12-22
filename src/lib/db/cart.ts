@@ -28,13 +28,13 @@ if cart = localstorage ? cart uses localStorageId: otherwise null */
 export async function getCart(): Promise<ShoppingCart | null> {
 // if the user is logged in we grab the cart from the database otherwise the cart is what cart is found in local storage
     const session = await getServerSession(authOptions);
-    let cart: CartWithProducts | null;
+    let cart: CartWithProducts | null = null;
 
     if (session) {
-    cart = await prisma.cart.findFirst({
-        where: {userId: session.user.id},
-        include: {items: {include: {product: true}}},
-    })
+        cart = await prisma.cart.findFirst({
+            where: {userId: session.user.id},
+            include: {items: {include: {product: true}}},
+        })
 
     } else {
         const localCartId = cookies().get("localCartId")?.value;
@@ -77,11 +77,11 @@ export async function createCart(): Promise<ShoppingCart> {
 
     if (session) {
         newCart = await prisma.cart.create({
-        data: {
-            userId: session.user.id
-        },});
-    }
-    else {
+            data: {
+                userId: session.user.id
+            },
+        });
+    } else {
         newCart = await prisma.cart.create({
             data: {},
         });
@@ -98,4 +98,75 @@ export async function createCart(): Promise<ShoppingCart> {
     };
 }
 
-//TODO send items to wishlist or checkout and delete items from cart
+
+//send items from anonymous cart to log in cart
+
+export async function mergeAnonymousCartIntoUserCart(userId: string) {
+    const localCartId = cookies().get("localCartId")?.value;
+
+    const localCart = localCartId
+        ? await prisma.cart.findUnique({
+            where: { id: localCartId },
+            include: { items: true },
+        })
+        : null;
+
+    if (!localCart) return;
+
+    const userCart = await prisma.cart.findFirst({
+        where: { userId },
+        include: { items: true },
+    });
+
+    await prisma.$transaction(async (tx) => {
+        if (userCart) {
+            const mergedCartItems = mergeCartItems(localCart.items, userCart.items);
+
+            await tx.cartItem.deleteMany({
+                where: { cartId: userCart.id },
+            });
+
+            await tx.cartItem.createMany({
+                data: mergedCartItems.map((item) => ({
+                    cartId: userCart.id,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                })),
+            });
+        } else {
+            await tx.cart.create({
+                data: {
+                    userId,
+                    items: {
+                        createMany: {
+                            data: localCart.items.map((item) => ({
+                                productId: item.productId,
+                                quantity: item.quantity,
+                            })),
+                        },
+                    },
+                },
+            });
+        }
+
+        await tx.cart.delete({
+            where: { id: localCart.id },
+        });
+        // throw Error("Transaction failed");
+        cookies().set("localCartId", "");
+    });
+}
+
+function mergeCartItems(...cartItems: CartItem[][]): CartItem[] {
+    return cartItems.reduce((total, items) => {
+        items.forEach((item) => {
+            const existingItem = total.find((i) => i.productId === item.productId);
+            if (existingItem) {
+                existingItem.quantity += item.quantity;
+            } else {
+                total.push(item);
+            }
+        });
+        return total;
+    }, [] as CartItem[]);
+}

@@ -57,3 +57,4 @@ export default function AddToWishListButton({
 }
 
 //TODO need to create a wishlist page and transfer to cart buttons
+//TODO needs to add One item to the wishlist. if the item already exist should return.

@@ -100,4 +100,73 @@ export async function createWishList(): Promise<{
     };
 }
 
-//TODO need to edit sending the items from wishlist to cart or checkout, delete items from the wishjlist
+
+export async function mergeAnonymousWishListIntoUserCart(userId: string) {
+    const localWishListId = cookies().get("localWishListId")?.value;
+
+    const localWishList = localWishListId
+        ? await prisma.wishList.findUnique({
+            where: { id: localWishListId },
+            include: { items: true },
+        })
+        : null;
+
+    if (!localWishList) return;
+
+    const userWishList = await prisma.wishList.findFirst({
+        where: { userId },
+        include: { items: true },
+    });
+
+    await prisma.$transaction(async (tx) => {
+        if (userWishList) {
+            const mergedWishListItems = mergeWishListItems(localWishList.items, userWishList.items);
+
+            await tx.wishListItem.deleteMany({
+                where: { wishListId: userWishList.id },
+            });
+
+            await tx.wishListItem.createMany({
+                data: mergedWishListItems.map((item) => ({
+                    wishListId: userWishList.id,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                })),
+            });
+        } else {
+            await tx.cart.create({
+                data: {
+                    userId,
+                    items: {
+                        createMany: {
+                            data: localWishList.items.map((item) => ({
+                                productId: item.productId,
+                                quantity: item.quantity,
+                            })),
+                        },
+                    },
+                },
+            });
+        }
+
+        await tx.wishList.delete({
+            where: { id: localWishList.id },
+        });
+        // throw Error("Transaction failed");
+        cookies().set("localWishListId", "");
+    });
+}
+
+function mergeWishListItems(...wishListItems: WishListItem[][]): WishListItem[] {
+    return wishListItems.reduce((total, items) => {
+        items.forEach((item) => {
+            const existingItem = total.find((i) => i.productId === item.productId);
+            if (existingItem) {
+                existingItem.quantity += item.quantity;
+            } else {
+                total.push(item);
+            }
+        });
+        return total;
+    }, [] as WishListItem[]);
+}
