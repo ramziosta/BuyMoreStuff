@@ -9,6 +9,7 @@ import {incrementWishList} from "@/app/products/[id]/wishListActions";
 import AddToCartButton from "@/app/products/[id]/AddToCartButton";
 import AddToWishListButton from "@/app/products/[id]/AddToWishListButton";
 
+
 interface ProductPageProps {
     params: {
         id: string,
@@ -18,7 +19,7 @@ interface ProductPageProps {
 
 //we cache the product in order not to get the product from the database twice for the card and for the mnetadata
 const getProduct = cache(async (id: string) => {
-    const product = await prisma.product.findUnique({where: {id}});
+    const product = await (prisma).product.findUnique({where: {id}});
     if (!product) notFound();
     return product;
 });

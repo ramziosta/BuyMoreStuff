@@ -28,6 +28,7 @@ async function addProduct(formData: FormData) {
     }
 
     try {
+
         await prisma.product.create({
             data: {name, description, imageUrl, price, details,},
         });

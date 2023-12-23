@@ -11,26 +11,44 @@ export async function setProductQuantity(productId: string, quantity: number) {
 // if the product quantity is 0 remove it from the cart
   if (quantity === 0) {
     if (articleInCart) {
-      await prisma.cartItem.delete({
-        where: { id: articleInCart.id },
-      });
+      await prisma.cart.update({
+        where :{ id: cart.id},
+        data :{
+          items :{
+            delete :{id :articleInCart.id}
+          }
+        }
+      })
     }
   } else {
     // if there are items in the cart update the item quantity
     if (articleInCart) {
-      await prisma.cartItem.update({
-        where: { id: articleInCart.id },
-        data: { quantity },
-      });
+      await prisma.cart.update({
+        where :{ id: cart.id},
+        data :{
+          items: {
+           update: {
+              where : { id: articleInCart.id},
+             data: {quantity}
+            }
+          }
+        }
+      })
     } else {
       // if there are no items create a new cart
-      await prisma.cartItem.create({
-        data: {
-          cartId: cart.id,
-          productId,
-          quantity,
-        },
-      });
+
+      await prisma.cart.update({
+        where :{ id: cart.id},
+        data :{
+          items: {
+            create: {
+             productId,
+              quantity
+            }
+          }
+        }
+      })
+
     }
   }
 
